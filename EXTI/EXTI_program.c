@@ -14,6 +14,8 @@
 #include "EXTI_config.h"
 /*Global pointer to function to hold INT0 ISR address*/
 void(*EXTI_pvInt0Func)(void)=NULL;
+
+
 void EXTI_voidInt0Init(void)
 {
 	/*1-Check sense control */
@@ -46,9 +48,6 @@ void EXTI_voidInt0Init(void)
 #error "Wrong INT0_INITIAL_STATE configuration option"
 #endif
 }
-
-/*********************************************************************************************/
-
 
 
 void EXTI_voidInt1Init(void)
