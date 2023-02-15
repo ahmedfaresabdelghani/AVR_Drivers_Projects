@@ -16,7 +16,7 @@
 
 
 #define  ADCSRA    		*((volatile u8*)0x7A)	    //ADC control and status register
-#define  ADCSRA_ADEN 	7						    //ADC Enable
+#define  ADCSRA_ADEN 	7						    //ADC Enable peripheral
 #define  ADCSRA_ADSC 	6						    //ADC Start Conversion
 #define  ADCSRA_ADATE 	5						    //Auto trigger Enable
 #define  ADCSRA_ADIF 	4						    //Interrupt Flag
@@ -25,10 +25,15 @@
 #define  ADCSRA_ADPS1	1                           //prescaler bit1
 #define  ADCSRA_ADPS0	0						    //prescaler bit0
 
+#define ADCSRB			*((volatile u8*)0x7B)
+#define ADCSRB_ADTS2	2
+#define ADCSRB_ADTS2	1
+#define ADCSRB_ADTS2	0
 
 #define  ADCH    		*((volatile u8*)0x79) 		//ADC result high register
 #define  ADCL    		*((volatile u8*)0x78) 		//ADC result low register
 
+#define ADC				*((volatile u16*)0x78)
 
 
 

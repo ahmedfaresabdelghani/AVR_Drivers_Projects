@@ -5,14 +5,15 @@
 
 void main(void)
 {
-	u8 Local_u8ADCReading;
+	u16 Local_u16ADCReading;
+	u32 Local_u32Result;
 	PORT_voidInit();
 	ADC_voidInit();
 
 
 	while(1)
 	{
-		Local_u8ADCReading=ADC_u8GetChannelReading(0);
-		DIO_u8SetPortValue(DIO_u8PORTD,Local_u8ADCReading);
+		Local_u16ADCReading=ADC_u8GetChannelReading(&Local_u32Result);
+		DIO_u8SetPortValue(DIO_u8PORTD,Local_u16ADCReading);
 	}
 }

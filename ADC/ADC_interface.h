@@ -13,7 +13,7 @@
 
 void ADC_voidInit(void);
 
-u8 ADC_u8GetChannelReading(u8 Copy_u8Channel);
+u16 ADC_u8GetChannelReading(u32* Copy_pu32ResultVolt);
 
 
 #endif

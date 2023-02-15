@@ -8,73 +8,75 @@
 /*************************************************/
 
 
-#ifndef PORT_CONFIG_H_
-#define PORT_CONFIG_H_
-/*choose : 0 for input:0 for FLOATING
-					   1 for PULLUP 
-	
-           1 for output:0 for inital value LOW
-						1 for initial value HIGH
-		   
+#ifndef ADC_CONFIG_H_
+#define ADC_CONFIG_H_
+/*ADC Voltage reference options :
+ * 								 1-AREF		: Internal Vref turned off
+ * 								 2-AVCC 	: with external Capacitor
+ * 								 3-INTERNAL : 1.1 or 2.56 with external Capacitor
+ */
 
-              */
-#define PORTB_PIN0_DIR              1
-#define PORTB_PIN1_DIR              1
-#define PORTB_PIN2_DIR              1
-#define PORTB_PIN3_DIR              0
-#define PORTB_PIN4_DIR              0
-#define PORTB_PIN5_DIR              0
-#define PORTB_PIN6_DIR              0
-#define PORTB_PIN7_DIR              0
+#define ADC_VOLTAGE_REF			 AVCC
 
+/* Set your MAX Voltage from AREF or AVCC or Internally*/
 
-#define PORTB_PIN0_INITIAL_VALUE    0
-#define PORTB_PIN1_INITIAL_VALUE    0
-#define PORTB_PIN2_INITIAL_VALUE    0
-#define PORTB_PIN3_INITIAL_VALUE    0
-#define PORTB_PIN4_INITIAL_VALUE    0
-#define PORTB_PIN5_INITIAL_VALUE    0
-#define PORTB_PIN6_INITIAL_VALUE    0
-#define PORTB_PIN7_INITIAL_VALUE    0
+#define ADC_MAX_VOLTAGE			 5
 
-	
-#define PORTC_PIN0_DIR              1
-#define PORTC_PIN1_DIR              1
-#define PORTC_PIN2_DIR              1
-#define PORTC_PIN3_DIR              1
-#define PORTC_PIN4_DIR              0
-#define PORTC_PIN5_DIR              0
-#define PORTC_PIN6_DIR              0
-#define PORTC_PIN7_DIR              0
+/*Resolution Options:
+ * 						1- TEN_BITS  1024
+ * 						2- EIGHT_BITS  256
+ */
+#define ADC_RESOLUTION	EIGHT_BITS
+
+/*ADMUX left or right adjust:
+ 	 	 	 	 	 	 1-LEFT
+ 	 	 	 	 	 	 2-RIGHT
+*
+#define ADMUX_ADLAR		LEFT*/
 
 
-#define PORTC_PIN0_INITIAL_VALUE    0
-#define PORTC_PIN1_INITIAL_VALUE    0
-#define PORTC_PIN2_INITIAL_VALUE    0
-#define PORTC_PIN3_INITIAL_VALUE    0
-#define PORTC_PIN4_INITIAL_VALUE    0
-#define PORTC_PIN5_INITIAL_VALUE    0
-#define PORTC_PIN6_INITIAL_VALUE    0
-#define PORTC_PIN7_INITIAL_VALUE    0
+/* ADC Channels Options:
+ * 							1-ADC0
+ * 							2-ADC1
+ * 							3-ADC2
+ * 							4-ADC3
+ * 							5-ADC4
+ * 							6-ADC5
+ * 							7-ADC6
+ * 							8-ADC7
+ */
+#define ADC_CHANNEL_SEL		ADC0
 
+/* ADC Prescaler Select Bits options:
+ *
+ * 							1-DIV_BY_2
+ *                          2-DIV_BY_4
+ *                          3-DIV_BY_8
+ *                          4-DIV_BY_16
+ *                          5-DIV_BY_32
+ *                          6-DIV_BY_64
+ *                          7-DIV_BY_128
+ */
+#define ADC_PRESCALER		DIV_BY_128
 
-#define PORTD_PIN0_DIR              1
-#define PORTD_PIN1_DIR              1
-#define PORTD_PIN2_DIR              1
-#define PORTD_PIN3_DIR              1
-#define PORTD_PIN4_DIR              0
-#define PORTD_PIN5_DIR              0
-#define PORTD_PIN6_DIR              0
-#define PORTD_PIN7_DIR              0
+/*Conversion type options:
+ * 							1-SINGLE
+ * 							2-AUTO_TRIG*/
 
+#define ADC_CONVERSION		AUTO_TRIG
 
-#define PORTD_PIN0_INITIAL_VALUE    1
-#define PORTD_PIN1_INITIAL_VALUE    1
-#define PORTD_PIN2_INITIAL_VALUE    1
-#define PORTD_PIN3_INITIAL_VALUE    1
-#define PORTD_PIN4_INITIAL_VALUE    1
-#define PORTD_PIN5_INITIAL_VALUE    1
-#define PORTD_PIN6_INITIAL_VALUE    1
-#define PORTD_PIN7_INITIAL_VALUE    1
+/*ADC Auto Trigger Source options:
+ *
+ * 							FREE_RUNNING
+ *                          ANALOG_COMPARATOR
+ *                          EXTI_REQUEST_0
+ *                          TIMER_0_MATCH_A
+ *                          TIMER_0_OVERFLOW
+ *                          TIMER_1_MATCH_B
+ *                          TIMER_1_OVERFLOW
+ *                          TIMER_1_CAPTURE
+ */
+#define ADC_AUTO_TRIG		FREE_RUNNING
+
 
 #endif
