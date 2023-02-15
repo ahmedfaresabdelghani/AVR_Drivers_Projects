@@ -96,14 +96,14 @@ u16 ADC_u8GetChannelReading(u32* Copy_pu32ResultVolt)
 /*Return ADC Reading*/
 #if ADC_RESOLUTION==EIGHT_BITS
 	Local_u16ADCReading=ADCH;
-*Copy_pu32ResultVolt=((Local_u16ADCReading*ADC_MAX_VOLTAGE)/ADC_RESOLUTION);
+	*Copy_pu32ResultVolt=(( ((u16)Local_u16ADCReading) * ((u8)ADC_MAX_VOLTAGE)) /(u16)ADC_RESOLUTION);
 return ADCH;
 #endif
 
 #if ADC_RESOLUTION==TEN_BITS
 
 Local_u16ADCReading=(ADCL|(ADCH<<8));
-*Copy_pu32ResultVolt=((Local_u16ADCReading*ADC_MAX_VOLTAGE)/ADC_RESOLUTION);
+*Copy_pu32ResultVolt=(( ((u16)Local_u16ADCReading) * ((u8)ADC_MAX_VOLTAGE)) /(u16)ADC_RESOLUTION);
 return ADC;
 #endif
 }
