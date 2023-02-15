@@ -74,8 +74,10 @@ void ADC_voidInit(void)
 #error "wrong conversion mode"
 #endif
 
-	/****************************/
 }
+
+
+/*****************************************************************************************************/
 
 
 u16 ADC_u8GetChannelReading(u32* Copy_pu32ResultVolt)
@@ -93,17 +95,17 @@ u16 ADC_u8GetChannelReading(u32* Copy_pu32ResultVolt)
 	/*Set down the flag*/
 	SET_BIT(ADCSRA,ADCSRA_ADIF);
 #endif
-/*Return ADC Reading*/
+	/*Return ADC Reading*/
 #if ADC_RESOLUTION==EIGHT_BITS
 	Local_u16ADCReading=ADCH;
 	*Copy_pu32ResultVolt=(( ((u16)Local_u16ADCReading) * ((u8)ADC_MAX_VOLTAGE)) /(u16)ADC_RESOLUTION);
-return ADCH;
+	return ADCH;
 #endif
 
 #if ADC_RESOLUTION==TEN_BITS
 
-Local_u16ADCReading=(ADCL|(ADCH<<8));
-*Copy_pu32ResultVolt=(( ((u16)Local_u16ADCReading) * ((u8)ADC_MAX_VOLTAGE)) /(u16)ADC_RESOLUTION);
-return ADC;
+	Local_u16ADCReading=(ADCL|(ADCH<<8));
+	*Copy_pu32ResultVolt=(( ((u16)Local_u16ADCReading) * ((u8)ADC_MAX_VOLTAGE)) /(u16)ADC_RESOLUTION);
+	return ADC;
 #endif
 }
