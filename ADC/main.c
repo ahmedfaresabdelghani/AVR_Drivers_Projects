@@ -22,6 +22,6 @@ void main(void)
 			CLCD_voidsendnumber(Local_u32Result);
 			CLCD_voidGoToXY(1,0);
 			CLCD_voidsendnumber(temp);
-			_delay_ms(1000);
+			_delay_ms(1050);
 	}
 }
