@@ -135,17 +135,17 @@ void CLCD_PrintNumber(u32 Copy_u32Number)
 	}
 }
 void CLCD_voidsendnumber(u32 copy_u32number){
-  u32 Local_832reversed=1;
+  u32 Local_u32reversed=1;
   while(copy_u32number!=0){
-    Local_832reversed=Local_832reversed*10+ copy_u32number%10;
+    Local_u32reversed=Local_u32reversed*10+ copy_u32number%10;
     copy_u32number/=10;
   }
   do
   {
-    CLCD_voidSendData((Local_832reversed%10)+'0');
-    Local_832reversed/=10;
+    CLCD_voidSendData((Local_u32reversed%10)+'0');
+    Local_u32reversed/=10;
 
   }
-  while(Local_832reversed!=1);
+  while(Local_u32reversed!=1);
 
 }
