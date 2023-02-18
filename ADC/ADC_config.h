@@ -78,5 +78,7 @@
  */
 #define ADC_AUTO_TRIG		FREE_RUNNING
 
+#define ADC_u32TIMEOUT		50000
+
 
 #endif

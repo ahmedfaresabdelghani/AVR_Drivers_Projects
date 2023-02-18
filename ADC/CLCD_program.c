@@ -126,7 +126,7 @@ void CLCD_PrintNumber(u32 Copy_u32Number)
 		Copy_u32Number/=10;
 		Local_u8Iterator++;
 	}
-	for(Local_u8Iterator;Local_u8Iterator>=0;Local_u8Iterator--)
+	for(;Local_u8Iterator>=0;Local_u8Iterator--)
 	{
 		if(Local_u8Array[Local_u8Iterator]!=0)
 		{
