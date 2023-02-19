@@ -12,8 +12,12 @@
 #include "ADC_private.h"
 #include "ADC_register.h"
 #include "ADC_config.h"
+static u16* ADC_pu16Reading=NULL;
+static u32* ADC_pu32Reading=NULL;
+static void(*ADC_pvCallBackNotificationFunc)(void)=NULL;
 
-void(*ADC_pvISRFunc)(void)=NULL;
+u8 ADC_u8BusyState=IDLE;
+
 
 void ADC_voidInit(void)
 {
@@ -80,50 +84,97 @@ void ADC_voidInit(void)
 /*****************************************************************************************************/
 u8 ADC_u8StartConversionSynch(u32* Copy_pu32ResultVolt,u16* Copy_pu16Reading)
 {
+
 	u16   Local_u16ADCReading;
 	u32   Local_u32Counter=0;
 	u32   Local_u32Result=0;
 	u8 	  Local_u8ErrorState=OK;
-	/*taking Analog input from selected channel
-	 * By Clearing MUX bits*/
-	ADMUX&=MUX_MASK;
-	/*Set the required channel into the MUX */
-	ADMUX|=ADC_CHANNEL_SEL;
-	/*Start conversion*/
-	SET_BIT(ADCSRA,ADCSRA_ADSC);
-	/*Polling (busy waiting) until the conversion complete flag is set or counter reaching the timeout*/
-	while((GET_BIT(ADCSRA,ADCSRA_ADIF)==0)&& (Local_u32Counter != ADC_u32TIMEOUT))
+	if(ADC_u8BusyState==IDLE)
 	{
-		Local_u32Counter++;
-	}
-	if(Local_u32Counter==ADC_u32TIMEOUT)
-	{
-		/*loop is broken because the timeout is reached*/
-		Local_u8ErrorState=NOK;
-	}
-	else
-	{
-		/*Loop is broken because the flag has been raised*/
-		/*Set down the flag*/
-		SET_BIT(ADCSRA,ADCSRA_ADIF);
-		/*return the reading*/
-		if(ADC_RESOLUTION==EIGHT_BITS)
+		ADC_u8BusyState=BUSY;
+		/*taking Analog input from selected channel
+		 * By Clearing MUX bits*/
+		ADMUX&=MUX_MASK;
+		/*Set the required channel into the MUX */
+		ADMUX|=ADC_CHANNEL_SEL;
+		/*Start conversion*/
+		SET_BIT(ADCSRA,ADCSRA_ADSC);
+		/*Polling (busy waiting) until the conversion complete flag is set or counter reaching the timeout*/
+		while((GET_BIT(ADCSRA,ADCSRA_ADIF)==0)&& (Local_u32Counter != ADC_u32TIMEOUT))
 		{
-			Local_u16ADCReading=ADCH;
-			*Copy_pu16Reading=Local_u16ADCReading;
+			Local_u32Counter++;
+		}
+		if(Local_u32Counter==ADC_u32TIMEOUT)
+		{
+			/*loop is broken because the timeout is reached*/
+			Local_u8ErrorState=NOK;
 		}
 		else
 		{
-			Local_u16ADCReading=ADC;
-			*Copy_pu16Reading=Local_u16ADCReading;
-		}
-		Local_u32Result=(( ((u32)Local_u16ADCReading) * (ADC_MAX_VOLTAGE*1000UL)) / ((u16)ADC_RESOLUTION) );
-		*Copy_pu32ResultVolt=Local_u32Result;
+			/*Loop is broken because the flag has been raised*/
+			/*Set down the flag*/
+			SET_BIT(ADCSRA,ADCSRA_ADIF);
+			/*return the reading*/
+			if(ADC_RESOLUTION==EIGHT_BITS)
+			{
+				Local_u16ADCReading=ADCH;
+				*Copy_pu16Reading=Local_u16ADCReading;
+			}
+			else
+			{
+				Local_u16ADCReading=ADC;
+				*Copy_pu16Reading=Local_u16ADCReading;
+			}
+			Local_u32Result=(( ((u32)Local_u16ADCReading) * (ADC_MAX_VOLTAGE*1000UL)) / ((u16)ADC_RESOLUTION) );
+			*Copy_pu32ResultVolt=Local_u32Result;
 
+		}
 	}
+	else
+	{
+		Local_u8ErrorState=BUSY_FUNC;
+	}
+
+
 	return Local_u8ErrorState;
 
 }
+u8 ADC_u8StartConversionASynch(u32* Copy_pu32ResultVolt,u16* Copy_pu16Reading,void (*Copy_pvNotificationFunc)(void))
+{
+	u8 Local_u8Errorstate=OK;
+	if(ADC_u8BusyState==IDLE)
+	{
+		if(Copy_pvNotificationFunc==NULL || Copy_pu16Reading==NULL ||Copy_pu32ResultVolt==NULL)
+		{
+			Local_u8Errorstate=NULL_POINTER;
+		}
+		else
+		{
+			/*Make ADC BUSY in order not to work till being IDLE*/
+			ADC_u8BusyState=BUSY;
+			/*Initialize the reading variables globally*/
+			ADC_pu16Reading=Copy_pu16Reading;
+			ADC_pu32Reading=Copy_pu32ResultVolt;
+			/*Initialize the callback notification function globally */
+			ADC_pvCallBackNotificationFunc=Copy_pvNotificationFunc;
+			/*taking Analog input from selected channel
+			 * By Clearing MUX bits*/
+			ADMUX&=MUX_MASK;
+			/*Set the required channel into the MUX */
+			ADMUX|=ADC_CHANNEL_SEL;
+			/*Start conversion*/
+			SET_BIT(ADCSRA,ADCSRA_ADSC);
+			/*Enable ADC Conversion Complete Interrupt*/
+			SET_BIT(ADCSRA,ADCSRA_ADIE);
+		}
+	}
+	else
+	{
+		Local_u8Errorstate=BUSY_FUNC;
+	}
+	return Local_u8Errorstate;
+}
+
 
 u16 ADC_u16GetChannelReading(u32* Copy_pu32ResultVolt)
 {
@@ -154,7 +205,36 @@ u16 ADC_u16GetChannelReading(u32* Copy_pu32ResultVolt)
 #endif
 }
 s32 ADC_s32Mapping(s32 Copy_s32InputMin,s32 Copy_s32InputMax,s32 Copy_s32OutputMin,s32 Copy_s32OutPutMax,s32 Copy_s32InputValue)
-{ s32 Local_s32OutputValue;
+{ 	s32 Local_s32OutputValue;
 Local_s32OutputValue=(((Copy_s32OutPutMax-Copy_s32OutputMin)*(Copy_s32InputValue-Copy_s32InputMax))/(Copy_s32InputMax-Copy_s32InputMin))+Copy_s32OutputMin;
 return Local_s32OutputValue;
+}
+
+void __vector_21 (void) __attribute__((signal));
+void __vector_21 (void)
+{
+	u16 Local_u16ADCReading;
+	u32 Local_u32Result;
+	/*read ADC result*/
+	/*Set down the flag*/
+	SET_BIT(ADCSRA,ADCSRA_ADIF);
+	/*return the reading*/
+	if(ADC_RESOLUTION==EIGHT_BITS)
+	{
+		Local_u16ADCReading=ADCH;
+		*ADC_pu16Reading=ADCH;
+	}
+	else
+	{
+		Local_u16ADCReading=ADC;
+		*ADC_pu16Reading=ADC;
+	}
+	Local_u32Result=(( ((u32)Local_u16ADCReading) * (ADC_MAX_VOLTAGE*1000UL)) / ((u16)ADC_RESOLUTION) );
+	*ADC_pu32Reading=Local_u32Result;
+	/*make ADC State be IDLE because it is finished*/
+	ADC_u8BusyState=IDLE;
+	/*call back notification function*/
+	ADC_pvCallBackNotificationFunc();
+	/*disable ADC Conversion Complete interrupt*/
+	CLR_BIT(ADCSRA,ADCSRA_ADIE);
 }
