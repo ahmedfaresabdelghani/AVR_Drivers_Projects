@@ -15,9 +15,8 @@
 static u16* ADC_pu16Reading=NULL;
 static u32* ADC_pu32Reading=NULL;
 static void(*ADC_pvCallBackNotificationFunc)(void)=NULL;
-
 u8 ADC_u8BusyState=IDLE;
-
+static u8 ADC_u8ISRSource;
 static u8* ADC_pu8ChannelArr=NULL;   	/*Global Variable to carry chain array*/
 static u8 ADC_u8ChainSize;				/*Global Variable to carry Number of Channels*/
 static u16* ADC_pu16ResultArr=NULL; 	/*Global Variable to carry chain Result*/
@@ -159,6 +158,8 @@ u8 ADC_u8StartConversionASynch(u32* Copy_pu32ResultVolt,u16* Copy_pu16Reading,vo
 		{
 			/*Make ADC BUSY in order not to work till being IDLE*/
 			ADC_u8BusyState=BUSY;
+			/*Make ISR source single channel Asynch*/
+			ADC_u8ISRSource=SINGLE_CHANNEL_ASYNCH;
 			/*Initialize the reading variables globally*/
 			ADC_pu16Reading=Copy_pu16Reading;
 			ADC_pu32Reading=Copy_pu32ResultVolt;
@@ -235,6 +236,9 @@ u8 ADC_u8StartChainAsynch( ADC_ChainStruct* Copy_psStructObject)
 		{
 			/*Make ADC Busy*/
 			ADC_u8BusyState=BUSY;
+			/*Make ISR source Chain Asynch*/
+			ADC_u8ISRSource=CHAIN_ASYNCH;
+
 			/*pass the structure variables to global variables to be used in ISR*/
 			/*Initialize chain channel array*/
 			ADC_pu8ChannelArr=Copy_psStructObject->channels;
@@ -264,7 +268,7 @@ u8 ADC_u8StartChainAsynch( ADC_ChainStruct* Copy_psStructObject)
 void __vector_21 (void) __attribute__((signal));
 void __vector_21 (void)
 {
-	if(ADC_CONVERSIONTYPE==SINGLE)
+	if(ADC_u8ISRSource==SINGLE_CHANNEL_ASYNCH)
 	{
 		u16 Local_u16ADCReading;
 		u32 Local_u32Result;
@@ -291,24 +295,30 @@ void __vector_21 (void)
 		/*disable ADC Conversion Complete interrupt*/
 		CLR_BIT(ADCSRA,ADCSRA_ADIE);
 	}
-	else if(ADC_CONVERSIONTYPE==MULTI)
+	else if(ADC_u8ISRSource==CHAIN_ASYNCH)
 	{
-		/*save the value of the last conversion*/
+		/*Read the result of the current conversion*/
 		ADC_pu16ResultArr[ADC_u8ChannelIndex]=ADCH;
+		/*Increment chain index*/
 		ADC_u8ChannelIndex++;
-		if(ADC_u8ChannelIndex<ADC_u8ChainSize){
-			/*start the new conversion*/
+		/*Check chain is finished or not*/
+		if(ADC_u8ChannelIndex<ADC_u8ChainSize)
+		{
+			/*start the new conversion of the next channel (chain not finished)*/
 			ADMUX&=MUX_MASK;
 			ADMUX|=ADC_pu8ChannelArr[ADC_u8ChannelIndex];
 			SET_BIT(ADCSRA,ADCSRA_ADSC);
 		}
 		else
 		{
+			/*chain is finished*/
 			ADC_u8BusyState=IDLE;
 			/*disable the interrupt*/
 			SET_BIT(ADCSRA,ADCSRA_ADIE);
-			/*notification function*/
-			ADC_u8pvnotificationfunc();
+			/*Invoke the Callback notification function*/
+			ADC_pvCallBackNotificationFunc();
+			/*Disable ADC conversion complete interrupt*/
+			CLR_BIT(ADCSRA,ADCSRA_ADIE);
 		}
 	}
 	else

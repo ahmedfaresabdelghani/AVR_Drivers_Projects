@@ -63,7 +63,9 @@
 
 #define SINGLE							1
 #define AUTO_TRIG						2
-#define MULTI							3
+
+#define SINGLE_CHANNEL_ASYNCH			0
+#define CHAIN_ASYNCH					1
 
 #define IDLE                            0
 #define BUSY							1

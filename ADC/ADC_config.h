@@ -80,6 +80,6 @@
 
 #define ADC_u32TIMEOUT		50000
 
-#define ADC_CONVERSIONTYPE  SINGLE
+
 
 #endif
