@@ -31,7 +31,7 @@
 /*ADMUX left or right adjust:
  	 	 	 	 	 	 1-LEFT
  	 	 	 	 	 	 2-RIGHT
-*
+ *
 #define ADMUX_ADLAR		LEFT*/
 
 
@@ -80,5 +80,6 @@
 
 #define ADC_u32TIMEOUT		50000
 
+#define ADC_CONVERSIONTYPE  SINGLE
 
 #endif

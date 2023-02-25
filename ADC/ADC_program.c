@@ -18,6 +18,10 @@ static void(*ADC_pvCallBackNotificationFunc)(void)=NULL;
 
 u8 ADC_u8BusyState=IDLE;
 
+static u8* ADC_pu8ChannelArr=NULL;
+static u8 ADC_u8ChainSize;
+static u16* ADC_pu16ResultArr=NULL;
+static u8 ADC_u8ChannelIndex=0;
 
 void ADC_voidInit(void)
 {
@@ -80,8 +84,8 @@ void ADC_voidInit(void)
 
 }
 
-
 /*****************************************************************************************************/
+
 u8 ADC_u8StartConversionSynch(u32* Copy_pu32ResultVolt,u16* Copy_pu16Reading)
 {
 
@@ -139,6 +143,9 @@ u8 ADC_u8StartConversionSynch(u32* Copy_pu32ResultVolt,u16* Copy_pu16Reading)
 	return Local_u8ErrorState;
 
 }
+
+/**************************************************************************************************/
+
 u8 ADC_u8StartConversionASynch(u32* Copy_pu32ResultVolt,u16* Copy_pu16Reading,void (*Copy_pvNotificationFunc)(void))
 {
 	u8 Local_u8Errorstate=OK;
@@ -175,6 +182,7 @@ u8 ADC_u8StartConversionASynch(u32* Copy_pu32ResultVolt,u16* Copy_pu16Reading,vo
 	return Local_u8Errorstate;
 }
 
+/**************************************************************************************************/
 
 u16 ADC_u16GetChannelReading(u32* Copy_pu32ResultVolt)
 {
@@ -204,37 +212,102 @@ u16 ADC_u16GetChannelReading(u32* Copy_pu32ResultVolt)
 	return ADC;
 #endif
 }
+
+/**************************************************************************************************/
+
 s32 ADC_s32Mapping(s32 Copy_s32InputMin,s32 Copy_s32InputMax,s32 Copy_s32OutputMin,s32 Copy_s32OutPutMax,s32 Copy_s32InputValue)
 { 	s32 Local_s32OutputValue;
 Local_s32OutputValue=(((Copy_s32OutPutMax-Copy_s32OutputMin)*(Copy_s32InputValue-Copy_s32InputMax))/(Copy_s32InputMax-Copy_s32InputMin))+Copy_s32OutputMin;
 return Local_s32OutputValue;
 }
+/**************************************************************************************************/
 
+u8 ADC_u8startchainconversion( ADC_ChainStruct* Copy_psStructObject)
+{
+	u8 Local_u8errorstate=OK;
+	if(Copy_psStructObject==NULL){
+		Local_u8errorstate=NULL_POINTER;
+	}
+	else{
+		if(ADC_u8BusyState==IDLE){
+			ADC_u8BusyState=BUSY;
+			/*pass the struct variables to global variables to be used in ISR*/
+			ADC_pu8ChannelArr=Copy_psStructObject->channels;
+			ADC_u8ChainSize=Copy_psStructObject->size;
+			ADC_pvCallBackNotificationFunc=Copy_psStructObject->notificationfunc;
+			ADC_pu16ResultArr=Copy_psStructObject->result;
+			ADC_u8ChannelIndex=0;
+			/*start the first conversion */
+			/*set the first channel*/
+			ADMUX&=MUX_MASK;
+			ADMUX|=ADC_pu8ChannelArr[ADC_u8ChannelIndex];
+			/*start the first conversion*/
+			SET_BIT(ADCSRA,ADCSRA_ADSC);
+			/*enable ADC complete  interrupt*/
+			SET_BIT(ADCSRA,ADCSRA_ADIE);
+		}
+		else{
+			Local_u8errorstate=BUSY_FUNC;
+		}
+	}
+	return Local_u8errorstate;
+
+}
+/**************************************************************************************************/
 void __vector_21 (void) __attribute__((signal));
 void __vector_21 (void)
 {
-	u16 Local_u16ADCReading;
-	u32 Local_u32Result;
-	/*read ADC result*/
-	/*Set down the flag*/
-	SET_BIT(ADCSRA,ADCSRA_ADIF);
-	/*return the reading*/
-	if(ADC_RESOLUTION==EIGHT_BITS)
+	if(ADC_CONVERSIONTYPE==SINGLE)
 	{
-		Local_u16ADCReading=ADCH;
-		*ADC_pu16Reading=ADCH;
+		u16 Local_u16ADCReading;
+		u32 Local_u32Result;
+		/*read ADC result*/
+		/*Set down the flag*/
+		SET_BIT(ADCSRA,ADCSRA_ADIF);
+		/*return the reading*/
+		if(ADC_RESOLUTION==EIGHT_BITS)
+		{
+			Local_u16ADCReading=ADCH;
+			*ADC_pu16Reading=ADCH;
+		}
+		else
+		{
+			Local_u16ADCReading=ADC;
+			*ADC_pu16Reading=ADC;
+		}
+		Local_u32Result=(( ((u32)Local_u16ADCReading) * (ADC_MAX_VOLTAGE*1000UL)) / ((u16)ADC_RESOLUTION) );
+		*ADC_pu32Reading=Local_u32Result;
+		/*make ADC State be IDLE because it is finished*/
+		ADC_u8BusyState=IDLE;
+		/*call back notification function*/
+		ADC_pvCallBackNotificationFunc();
+		/*disable ADC Conversion Complete interrupt*/
+		CLR_BIT(ADCSRA,ADCSRA_ADIE);
+	}
+	else if(ADC_CONVERSIONTYPE==MULTI)
+	{
+		/*save the value of the last conversion*/
+		ADC_pu16ResultArr[ADC_u8ChannelIndex]=ADCH;
+		ADC_u8ChannelIndex++;
+		if(ADC_u8ChannelIndex<ADC_u8ChainSize){
+			/*start the new conversion*/
+			ADMUX&=MUX_MASK;
+			ADMUX|=ADC_pu8ChannelArr[ADC_u8ChannelIndex];
+			SET_BIT(ADCSRA,ADCSRA_ADSC);
+		}
+		else
+		{
+			ADC_u8BusyState=IDLE;
+			/*disable the interrupt*/
+			SET_BIT(ADCSRA,ADCSRA_ADIE);
+			/*notification function*/
+			ADC_u8pvnotificationfunc();
+		}
 	}
 	else
 	{
-		Local_u16ADCReading=ADC;
-		*ADC_pu16Reading=ADC;
+		/*do nothing*/
 	}
-	Local_u32Result=(( ((u32)Local_u16ADCReading) * (ADC_MAX_VOLTAGE*1000UL)) / ((u16)ADC_RESOLUTION) );
-	*ADC_pu32Reading=Local_u32Result;
-	/*make ADC State be IDLE because it is finished*/
-	ADC_u8BusyState=IDLE;
-	/*call back notification function*/
-	ADC_pvCallBackNotificationFunc();
-	/*disable ADC Conversion Complete interrupt*/
-	CLR_BIT(ADCSRA,ADCSRA_ADIE);
 }
+
+

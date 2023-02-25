@@ -63,6 +63,7 @@
 
 #define SINGLE							1
 #define AUTO_TRIG						2
+#define MULTI							3
 
 #define IDLE                            0
 #define BUSY							1
