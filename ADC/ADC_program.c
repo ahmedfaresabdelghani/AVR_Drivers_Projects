@@ -18,10 +18,10 @@ static void(*ADC_pvCallBackNotificationFunc)(void)=NULL;
 
 u8 ADC_u8BusyState=IDLE;
 
-static u8* ADC_pu8ChannelArr=NULL;
-static u8 ADC_u8ChainSize;
-static u16* ADC_pu16ResultArr=NULL;
-static u8 ADC_u8ChannelIndex=0;
+static u8* ADC_pu8ChannelArr=NULL;   	/*Global Variable to carry chain array*/
+static u8 ADC_u8ChainSize;				/*Global Variable to carry Number of Channels*/
+static u16* ADC_pu16ResultArr=NULL; 	/*Global Variable to carry chain Result*/
+static u8 ADC_u8ChannelIndex=0;			/*Global Variable to carry the current channel index*/
 
 void ADC_voidInit(void)
 {
@@ -222,22 +222,29 @@ return Local_s32OutputValue;
 }
 /**************************************************************************************************/
 
-u8 ADC_u8startchainconversion( ADC_ChainStruct* Copy_psStructObject)
+u8 ADC_u8StartChainAsynch( ADC_ChainStruct* Copy_psStructObject)
 {
 	u8 Local_u8errorstate=OK;
-	if(Copy_psStructObject==NULL){
+	/* Check NULL pointer */
+	if(Copy_psStructObject==NULL)
+	{
 		Local_u8errorstate=NULL_POINTER;
 	}
 	else{
-		if(ADC_u8BusyState==IDLE){
+		if(ADC_u8BusyState==IDLE)
+		{
+			/*Make ADC Busy*/
 			ADC_u8BusyState=BUSY;
-			/*pass the struct variables to global variables to be used in ISR*/
+			/*pass the structure variables to global variables to be used in ISR*/
+			/*Initialize chain channel array*/
 			ADC_pu8ChannelArr=Copy_psStructObject->channels;
+			/*Initialize chain Size*/
 			ADC_u8ChainSize=Copy_psStructObject->size;
+			/*Initialize chain Notification Function*/
 			ADC_pvCallBackNotificationFunc=Copy_psStructObject->notificationfunc;
+			/*Initialize chain Result array*/
 			ADC_pu16ResultArr=Copy_psStructObject->result;
 			ADC_u8ChannelIndex=0;
-			/*start the first conversion */
 			/*set the first channel*/
 			ADMUX&=MUX_MASK;
 			ADMUX|=ADC_pu8ChannelArr[ADC_u8ChannelIndex];
