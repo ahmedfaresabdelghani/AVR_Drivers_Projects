@@ -16,32 +16,39 @@
 static void (*TIMER0_pvCallBackFunc)(void)=NULL;
 void TIMER0_voidInit(void)
 {
-	/*choose CTC mode*/
-	CLR_BIT(TCCR0A,TCCR0A_WGM00);
+	/*choose Fast PWM mode*/
+	SET_BIT(TCCR0A,TCCR0A_WGM00);
 	SET_BIT(TCCR0A,TCCR0A_WGM01);
-	/*output compare match interrupt enable*/
-	SET_BIT(TIMSK0,TIMSK0_OCIE0A);
-	/*set compare match value to 250*/
-	OCR0A=250;
+	/*output compare match interrupt enable
+	 * SET_BIT(TIMSK0,TIMSK0_OCIE0A);*/
 
-	/*prescaler division by 8*/
-	CLR_BIT(TCCR0B,TCCR0B_CS00);
+	/*set compare match value to 250
+	 * OCR0A=125;*/
+	/*clear on compare match , set on top*/
+	CLR_BIT(TCCR0A,6);
+	SET_BIT(TCCR0A,7);
+	/*prescaler division by 64*/
+	SET_BIT(TCCR0B,TCCR0B_CS00);
 	SET_BIT(TCCR0B,TCCR0B_CS01);
 	CLR_BIT(TCCR0B,TCCR0B_CS02);
 }
 
+void TIMER0_voidSetCompMatchValue(u8 Copy_u8value)
+{
+	OCR0A=Copy_u8value;
+}
 u8 TIMER0_u8SetCallBack(void(*Copy_pvCallBackFunc)(void))
 {
 	u8 Local_u8ErrorState=OK;
 
 	if(Copy_pvCallBackFunc==NULL){
-		 Local_u8ErrorState=NULL_POINTER;
-	 }
+		Local_u8ErrorState=NULL_POINTER;
+	}
 
-	 else{
-		 TIMER0_pvCallBackFunc=Copy_pvCallBackFunc;
+	else{
+		TIMER0_pvCallBackFunc=Copy_pvCallBackFunc;
 
-	 }
+	}
 	return Local_u8ErrorState;
 }
 
