@@ -13,6 +13,14 @@
 
 void TIMER0_voidInit(void);
 
+void TIMER1_voidInit(void);
+
+void TIMER1_voidSetICR(u16 Copy_u16TopValue);
+
+void TIMER1_voidSetChannelACompareMatch(u16 Copy_u16TopValue);
+
+void TIMER1_voidSetChannelBCompareMatch(u16 Copy_u16TopValue);
+
 u8 TIMER0_u8SetCallBack(void(* Copy_pvCallBackFunc)(void));
 
 void TIMER0_voidSetCompMatchValue(u8 Copy_u8value);

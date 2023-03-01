@@ -51,7 +51,38 @@ u8 TIMER0_u8SetCallBack(void(*Copy_pvCallBackFunc)(void))
 	}
 	return Local_u8ErrorState;
 }
-
+/***************************************************************************/
+void TIMER1_voidInit(void)
+{
+	/*Setting the non-inverting Compare output mode in Fast PWM*/
+	SET_BIT(TCCR1A,TCCR1A_COM1A1);
+	CLR_BIT(TCCR1A,TCCR1A_COM1A0);
+	/*Setting the Waveform Generation Mode*/
+	CLR_BIT(TCCR1A,TCCR1A_WGM10);
+	SET_BIT(TCCR1A,TCCR1A_WGM11);
+	SET_BIT(TCCR1A,TCCR1A_WGM11);
+	SET_BIT(TCCR1A,TCCR1B_WGM12);
+	SET_BIT(TCCR1A,TCCR1B_WGM12);
+	/*Setting Prescaler and Clock selection*/
+	TCCR1B&=PRESCALER_MASK;
+	TCCR1B|=DIV_BY_8;
+}
+/***************************************************************************/
+void TIMER1_voidSetICR(u16 Copy_u16TopValue)
+{
+	ICR1=Copy_u16TopValue;
+}
+/***************************************************************************/
+void TIMER1_voidSetChannelACompareMatch(u16 Copy_u16TopValue)
+{
+	OCR1A=Copy_u16TopValue;
+}
+/***************************************************************************/
+void TIMER1_voidSetChannelBCompareMatch(u16 Copy_u16TopValue)
+{
+	OCR1B=Copy_u16TopValue;
+}
+/***************************************************************************/
 void __vector_14 (void)__attribute__((signal));
 void __vector_14 (void)
 {
