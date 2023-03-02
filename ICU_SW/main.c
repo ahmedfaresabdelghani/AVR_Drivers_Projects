@@ -20,13 +20,9 @@ void main(void){
 	EXTI_voidInt0Init();
 	TIMER1_voidInit();
 	TIMER0_voidInit();
-	CLCD_voidInit();
 
 	GIE_voidEnable();
-	u16 Local_u16Iterator=0;
-	u16 Local_u16MappedValue;
-	u16 Local_u16ADCOutputVal;
-	u32 Local_u32ADCOutputVolt;
+	CLCD_voidInit();
 	while(1)
 	{
 		/*wait until Period ticks and on ticks are measured*/
