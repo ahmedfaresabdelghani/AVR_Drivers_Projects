@@ -15,7 +15,7 @@
 #define CLCD_RS_PIN      DIO_u8PIN0
 #define CLCD_RW_PIN      DIO_u8PIN1
 #define CLCD_E_PIN       DIO_u8PIN2
-#define CLCD_STRING      "ahmed"
+
 
 
 
