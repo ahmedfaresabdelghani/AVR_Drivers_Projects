@@ -20,7 +20,6 @@ void main(void){
 	EXTI_voidInt0Init();
 	TIMER1_voidInit();
 	TIMER0_voidInit();
-
 	GIE_voidEnable();
 	CLCD_voidInit();
 	while(1)

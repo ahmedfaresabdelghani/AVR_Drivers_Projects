@@ -16,7 +16,7 @@
 						1 for initial value HIGH
               */
 #define PORTB_PIN0_DIR              0
-#define PORTB_PIN1_DIR              0
+#define PORTB_PIN1_DIR              1
 #define PORTB_PIN2_DIR              0
 #define PORTB_PIN3_DIR              0
 #define PORTB_PIN4_DIR              0

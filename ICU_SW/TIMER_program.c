@@ -23,7 +23,7 @@ void TIMER0_voidInit(void)
 	 * SET_BIT(TIMSK0,TIMSK0_OCIE0A);*/
 
 	/*set compare match value to 64 for duty cycle 25%*/
-	  OCR0A=64;
+	OCR0A=64;
 	/*clear on compare match , set on top*/
 	CLR_BIT(TCCR0A,6);
 	SET_BIT(TCCR0A,7);
@@ -56,15 +56,18 @@ void TIMER1_voidInit(void)
 {
 
 	/*Setting the non-inverting Compare output mode in Fast PWM*/
-	//SET_BIT(TCCR1A,TCCR1A_COM1A1);
-	//CLR_BIT(TCCR1A,TCCR1A_COM1A0);
+	SET_BIT(TCCR1A,TCCR1A_COM1A1);
+	CLR_BIT(TCCR1A,TCCR1A_COM1A0);
 	/*Setting the Waveform Generation Mode*/
 	//CLR_BIT(TCCR1A,TCCR1A_WGM10);
 	//SET_BIT(TCCR1A,TCCR1A_WGM11);
-	//SET_BIT(TCCR1A,TCCR1A_WGM11);
-	//SET_BIT(TCCR1A,TCCR1B_WGM12);
-	//SET_BIT(TCCR1A,TCCR1B_WGM12);
-
+	//SET_BIT(TCCR1B,TCCR1B_WGM12);
+	//SET_BIT(TCCR1B,TCCR1B_WGM13);
+	/*Setting the normal mode */
+	CLR_BIT(TCCR1A,TCCR1A_WGM10);
+	CLR_BIT(TCCR1A,TCCR1A_WGM11);
+	CLR_BIT(TCCR1B,TCCR1B_WGM12);
+	CLR_BIT(TCCR1B,TCCR1B_WGM13);
 	/*Setting Prescaler and Clock selection*/
 	TCCR1B&=PRESCALER_MASK;
 	TCCR1B|=DIV_BY_8;

@@ -33,9 +33,9 @@ void CLCD_voidSendCommand(u8 Copy_u8Command)
 	DIO_u8SetPortValue(CLCD_DATA_PORT,(Copy_u8Command));
 
 	/*Send Enable pulse*/
-		DIO_u8SetPinValue(CLCD_CTRL_PORT,CLCD_E_PIN,DIO_u8PIN_HIGH);
-		_delay_ms(3);
-		DIO_u8SetPinValue(CLCD_CTRL_PORT,CLCD_E_PIN,DIO_u8PIN_LOW);
+	DIO_u8SetPinValue(CLCD_CTRL_PORT,CLCD_E_PIN,DIO_u8PIN_HIGH);
+	_delay_ms(3);
+	DIO_u8SetPinValue(CLCD_CTRL_PORT,CLCD_E_PIN,DIO_u8PIN_LOW);
 
 
 }
@@ -54,10 +54,10 @@ void CLCD_voidSendData(u8 Copy_u8Data)
 	DIO_u8SetPinValue(CLCD_CTRL_PORT,CLCD_E_PIN,DIO_u8PIN_LOW);
 	/*sending lower data bits to data port pins*/
 	DIO_u8SetPortValue(CLCD_DATA_PORT,(Copy_u8Data));
-		/*Send Enable pulse*/
-		DIO_u8SetPinValue(CLCD_CTRL_PORT,CLCD_E_PIN,DIO_u8PIN_HIGH);
-		_delay_ms(3);
-		DIO_u8SetPinValue(CLCD_CTRL_PORT,CLCD_E_PIN,DIO_u8PIN_LOW);
+	/*Send Enable pulse*/
+	DIO_u8SetPinValue(CLCD_CTRL_PORT,CLCD_E_PIN,DIO_u8PIN_HIGH);
+	_delay_ms(3);
+	DIO_u8SetPinValue(CLCD_CTRL_PORT,CLCD_E_PIN,DIO_u8PIN_LOW);
 }
 void CLCD_voidInit(void)
 {
@@ -130,22 +130,22 @@ void CLCD_PrintNumber(u32 Copy_u32Number)
 	{
 		if(Local_u8Array[Local_u8Iterator]!=0)
 		{
-		CLCD_voidSendData(Local_u8Array[Local_u8Iterator]+'0');
+			CLCD_voidSendData(Local_u8Array[Local_u8Iterator]+'0');
 		}
 	}
 }
 void CLCD_voidsendnumber(u32 copy_u32number){
-  u32 Local_u32reversed=1;
-  while(copy_u32number!=0){
-    Local_u32reversed=Local_u32reversed*10+ copy_u32number%10;
-    copy_u32number/=10;
-  }
-  do
-  {
-    CLCD_voidSendData((Local_u32reversed%10)+'0');
-    Local_u32reversed/=10;
+	u32 Local_u32reversed=1;
+	while(copy_u32number!=0){
+		Local_u32reversed=Local_u32reversed*10+ copy_u32number%10;
+		copy_u32number/=10;
+	}
+	do
+	{
+		CLCD_voidSendData((Local_u32reversed%10)+'0');
+		Local_u32reversed/=10;
 
-  }
-  while(Local_u32reversed!=1);
+	}
+	while(Local_u32reversed!=1);
 
 }

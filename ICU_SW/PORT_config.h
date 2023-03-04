@@ -10,11 +10,13 @@
 
 #ifndef PORT_CONFIG_H_
 #define PORT_CONFIG_H_
-/*choose : 0 for input:0 for FLOATING
+/*choose : 0 for input:
+ * 					   0 for FLOATING
 					   1 for PULLUP 
-           1 for output:0 for initial value LOW
-						1 for initial value HIGH
-              */
+           1 for output:
+           	   	   	   0 for initial value LOW
+					   1 for initial value HIGH
+ */
 #define PORTB_PIN0_DIR              1
 #define PORTB_PIN1_DIR              1
 #define PORTB_PIN2_DIR              1
@@ -24,7 +26,7 @@
 #define PORTB_PIN6_DIR              0
 #define PORTB_PIN7_DIR              0
 
-	
+
 #define PORTC_PIN0_DIR              1
 #define PORTC_PIN1_DIR              1
 #define PORTC_PIN2_DIR              1
