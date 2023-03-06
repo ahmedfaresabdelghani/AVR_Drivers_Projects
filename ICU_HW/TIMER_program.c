@@ -148,11 +148,11 @@ u8 ICU_u8SetCallBack(void (*Copy_pvCallBackFunc)(void))
 	u8 Local_u8ErrorState=OK;
 	if(Copy_pvCallBackFunc==NULL)
 	{
-		ICU_pvCallBackFunc=Copy_pvCallBackFunc;
+		Local_u8ErrorState=NULL_POINTER;
 	}
 	else
 	{
-		Local_u8ErrorState=NOK;
+		ICU_pvCallBackFunc=Copy_pvCallBackFunc;
 	}
 	return Local_u8ErrorState;
 
@@ -169,9 +169,10 @@ void __vector_14 (void)
 }
 /***************************************************************************/
 /*ICU ISR*/
-void __vector_10 (void) __attribute__((signal));
-
-void __vector_10(void)
-{
-	ICU_pvCallBackFunc();
+void __vector_10 (void)__attribute__((signal));
+void __vector_10 (void){
+	if(ICU_pvCallBackFunc!=NULL){
+		ICU_pvCallBackFunc();
+	}
 }
+

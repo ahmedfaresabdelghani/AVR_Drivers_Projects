@@ -10,16 +10,17 @@ static u16 PeriodTicks=0;
 static u16 OnTicks=0;
 void ICU_HW(void);
 void main(void){
-	/*PB0 ICP1 output PWM output
-	 *PD6 T0 PWM input
+	/*PB0 ICP1 Input PWM
+	 *PD6 T0 PWM Output
 	 * 	*/
 	PORT_voidInit();
 	ICU_voidInit();
 	ICU_u8SetCallBack(&ICU_HW);
 	TIMER1_voidInit();
 	TIMER0_voidInit();
-	CLCD_voidInit();
 	GIE_voidEnable();
+	CLCD_voidInit();
+
 	while(1)
 	{
 		/*wait until Period ticks and on ticks are measured*/
