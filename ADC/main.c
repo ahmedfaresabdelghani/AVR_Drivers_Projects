@@ -4,7 +4,7 @@
 #include "ADC_interface.h"
 #include "util/delay.h"
 #include "GIE_interface.h"
-void ADC_NotificationFunc(void);
+//void ADC_NotificationFunc(void);
 u16 App_u16ADCReading;
 u32 App_u32ADCReading;
 void main(void)
@@ -12,9 +12,9 @@ void main(void)
 
 
 	PORT_voidInit();
-	ADC_voidInit();
+	//ADC_voidInit();
 	/*when enabling GIE with Synch ADC start conv func the code didn't work LCD didn't show information*/
-	GIE_voidEnable();
+	//GIE_voidEnable();
 
 	while(1)
 	{
@@ -45,11 +45,30 @@ void ADC_NotificationFunc(void)
 	DIO_u8SetPinValue(DIO_u8PORTC,DIO_u8PIN2,DIO_u8PIN_HIGH);
 */
 
-		ADC_u8StartConversionASynch(&App_u32ADCReading,&App_u16ADCReading,&ADC_NotificationFunc);
 
+DIO_u8SetPinValue(DIO_u8PORTD,DIO_u8PIN1,DIO_u8PIN_HIGH);
+_delay_ms(1000);
+
+DIO_u8SetPinValue(DIO_u8PORTD,DIO_u8PIN1,DIO_u8PIN_LOW);
+
+_delay_ms(1000);
+
+/*
+		ADC_u8StartConversionASynch(&App_u32ADCReading,&App_u16ADCReading,&ADC_NotificationFunc);
+*/
 	}
 }
+
+
+
+
+
+
+
+
+/*
 void ADC_NotificationFunc(void)
 {
 	DIO_u8SetPortValue(DIO_u8PORTD,App_u16ADCReading);
 }
+*/
