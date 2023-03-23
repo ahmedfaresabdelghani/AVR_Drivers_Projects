@@ -6,6 +6,8 @@
 #include <util/delay.h>
 #include "USART_interface.h"
 void main(void){
+	/*Checking UART connection using PUTTY*/
+
 	PORT_voidInit();
 	USART_voidInit();
 	u8 Local_u8Data=0;
