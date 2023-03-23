@@ -48,7 +48,7 @@
 
 
 
-/*********PORT Pins Initial Values********/
+/*********PORT Pins Initial Values*******/
 
 
 #define PORTB_PIN0_INITIAL_VALUE    0

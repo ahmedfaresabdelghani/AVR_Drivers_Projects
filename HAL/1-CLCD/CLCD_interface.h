@@ -19,7 +19,7 @@ void CLCD_voidSendData(u8 Copy_u8Data);
 
 void CLCD_voidInit(void);
 
-/*constant char because i won't change any thing in this string for any reason*/
+/*constant char  because i won't change any thing in this string for any reason*/
 void CLCD_voidSendString(const char* Copy_pcString);
 
 void CLCD_voidGoToXY(u8 Copy_u8XPos,u8 Copy_u8YPos);

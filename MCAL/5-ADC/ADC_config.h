@@ -11,7 +11,7 @@
 #ifndef ADC_CONFIG_H_
 #define ADC_CONFIG_H_
 /*ADC Voltage reference options :
- * 								 1-AREF		: Internal Vref turned off
+ * 								 1-AREF		: Internal V-ref turned off
  * 								 2-AVCC 	: with external Capacitor
  * 								 3-INTERNAL : 1.1 or 2.56 with external Capacitor
  */
