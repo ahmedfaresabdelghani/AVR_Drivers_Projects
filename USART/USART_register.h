@@ -42,6 +42,7 @@
 #define UCSRC_UMSELn0       6 		/*USART Mode Select*/
 #define UCSRC_UMSELn1       7		/*USART Mode Select (Asynchronous // Synchronous)*/
 
+#define UBRR0            	*((volatile u16*)0xC4)
 #define UBRRL				*((volatile u8*)0xC4)	/*USART Baud Rate Register Low  0-7  */
 #define	UBRRH				*((volatile u8*)0xC5)	/*USART Baud Rate Register High 8-11 */
 

@@ -20,7 +20,7 @@ void main(void){
 		}
 		else if (Local_u8Data=='2')
 		{
-			DIO_u8SetPinValue('C',1,DIO_u8PIN_LOW);
+			DIO_u8SetPinValue('C',0,DIO_u8PIN_LOW);
 		}
 		USART_voidSend('D');
 	}
