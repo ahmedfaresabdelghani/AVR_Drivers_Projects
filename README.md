@@ -7,23 +7,6 @@ This repository can be useful to anyone in the process of learning Embedded Syst
 Please consider referring my work if you would ever use it in any of your own projects.
 
 
-## COTS
-
-The components that are typically found on a software development shelf for embedded systems include:
-
-- MCAL (Microcontroller Abstraction Layer): As mentioned earlier, the MCAL provides a low-level interface between the microcontroller hardware and the higher-level software. It includes drivers and functions for handling peripherals such as timers, GPIOs, and communication interfaces.
-
-- HAL (Hardware Abstraction Layer): The HAL provides an interface between the hardware and the operating system or application software. It includes functions and drivers that abstract hardware details, such as timers, interrupts, and communication interfaces, and provides a standardized interface for software to interact with the hardware.
-
-- APP (Application Software): The APP is the main software component that runs on the microcontroller and provides the functionality of the embedded system. It interacts with the MCAL and HAL to control the hardware and perform tasks such as data processing, communication, and control.
-
-- RTOS (Real-Time Operating System): An RTOS is a software layer that provides a scheduling and task management system for the embedded system. It allows for the execution of multiple tasks in a predictable and deterministic manner, enabling real-time response to external events.
-
-- BSP (Board Support Package): The BSP provides low-level software components and drivers specific to the hardware platform, such as the microcontroller and peripherals, and allows for easy integration of the hardware with the software.
-
-These components are usually provided by the microcontroller manufacturer or third-party vendors and can be combined and customized to suit the requirements of a particular embedded system project.
-
-
 
 ## List of Existing Drivers 
 1. DIO peripheral (MCAL Layer)
